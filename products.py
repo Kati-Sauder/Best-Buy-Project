@@ -1,3 +1,6 @@
+from colorama import Fore
+
+
 class Product:
     quantity = 0
 
@@ -49,38 +52,44 @@ class Product:
 
     def activate(self):
         """Activates the product"""
-        print(f"{self.name} has been activated.")
+        print(Fore.CYAN + f"Internal Info: {self.name} has been activated." + Fore.RESET)
         self.active = True
 
     def deactivate(self):
         """Deactivates the product"""
-        print(f"{self.name} has been deactivated.")
+        print(Fore.CYAN + f"Internal Info: {self.name} has been deactivated." + Fore.RESET)
         self.active = False
 
     def show(self):
         """Returns a string that represents the product."""
-        return f"The Product name is {self.name}, it's price is {self.price} and it has a quantity of {self.quantity}."
+        return f"The Product name is {self.name}, its price is {self.price} and it has a quantity of {self.quantity}."
 
     def buy(self, quantity):
-        """Buys a certain quantity of the product, returns the total price (float) of the purchase and
+        """Buys a certain quantity of a product, returns the total price (float) of the purchase and
            updates the quantity of the product.
         """
+
         if not self.active:
-            print(f"{self.name} is not an active product and therefore can't be purchased.")
+            print(Fore.RED + f"Error: {self.name} has been deactivated and therefore can't be purchased." + Fore.RESET)
+            return 0
 
-        if quantity > self.quantity:
-            print(f"Not enough in stock. Available quantity: {self.quantity}.")
+        elif quantity > self.quantity:
+            print(Fore.RED + f"Error: Not enough items of {self.name} in stock. Available quantity: {self.quantity}." + Fore.RESET)
+            return 0
 
-        if quantity <= 0:
-            print(f"Quantity must be greater than 0.")
+        elif quantity <= 0:
+            print(Fore.RED + f"Error: Quantity must be greater than 0." + Fore.RESET)
+            return 0
 
         total_price = float(quantity * self.price)
         self.quantity -= quantity
+
+        print(
+            f"You bought {quantity} pieces of {self.name}. The total price is {total_price} EUR. The remaining stock is {self.quantity}.")
+
         if self.quantity == 0:
-            print(f"You bought {quantity} pieces of {self.name}. The total price is {total_price} EUR. The remaining stock is {self.quantity}.")
             self.deactivate()
+            print(Fore.CYAN + f"Internal Info: {self.name} is now out of stock." + Fore.RESET)
 
-        else:
-            print(f"You bought {quantity} pieces of {self.name}. The total price is {total_price} EUR. The remaining stock is {self.quantity}.")
+        return round(total_price, 2)
 
-        return total_price

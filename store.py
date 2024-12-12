@@ -1,4 +1,5 @@
 from products import Product
+from colorama import Fore
 
 
 class Store:
@@ -39,6 +40,15 @@ class Store:
         active_products = [product for product in self.product_list if product.active]
         return active_products
 
+    def find_product(self, name):
+        """
+        Find and return a product instance by name.
+        """
+        for product in self.product_list:
+            if product.name.lower() == name.lower():
+                return product
+        return None
+
     def order(self, shopping_list):
         """
         Gets a list of tuples, where each tuple has 2 items:
@@ -47,18 +57,19 @@ class Store:
         """
         total_price = 0
         for product, quantity in shopping_list:
-            total_price += product.buy(quantity)
-        return total_price
+            customer_purchase = product.buy(quantity)
+            if customer_purchase is not None and customer_purchase > 0:
+                total_price += customer_purchase
+            else:
+                print(Fore.RED + "Order failed." + Fore.RESET)
+
+        if total_price > 0:
+            total_price = round(total_price, 2)
+
+            return float(total_price)
+        else:
+            return 0
 
 
-product_list = [Product("MacBook Air M2", price=1450, quantity=100),
-                Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-                Product("Google Pixel 7", price=500, quantity=250),
-               ]
 
-store = Store(product_list)
-active_products = store.get_all_products()
-print(store.get_total_quantity())
-print(store.order([(active_products[1], 13), (active_products[2], 24)]))
-print(store.get_total_quantity())
 
